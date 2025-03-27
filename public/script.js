@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", loadContacts);
 
 async function loadContacts() {
     try {
-        let response = await fetch("http://localhost:3000/contacts");
+        let response = await fetch("https://listadecontatos.onrender.com");
         let contacts = await response.json();
 
         let contactList = document.getElementById("contactList");
