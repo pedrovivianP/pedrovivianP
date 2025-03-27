@@ -1,27 +1,15 @@
 const express = require('express');
-const mongoose = require('./database'); // Importa a conexão com o banco
-const Contact = require('./contact'); // Importa o modelo Contact
+const mongoose = require('./database'); // Conexão com o banco
+const Contact = require('./contact'); // Modelo Contact
 const path = require('path');
-const cors = require('cors'); // Importa o pacote cors
 
 const app = express();
-
-// Configuração do CORS para permitir requisições do seu frontend hospedado no Render
-const corsOptions = {
-    origin: 'https://listadecontatos.onrender.com', // Substitua pela URL do seu frontend
-    methods: 'GET, POST, PUT, DELETE', // Métodos permitidos
-    allowedHeaders: 'Content-Type, Authorization', // Cabeçalhos permitidos
-};
-
-// Usar o middleware cors com as opções configuradas
-app.use(cors(corsOptions));
-
 app.use(express.json());
 
-// Servir arquivos estáticos (como o HTML)
+// Servir arquivos estáticos (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Servir a página principal
+// Página principal
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -50,8 +38,8 @@ app.get('/contacts', async (req, res) => {
 // Rota para excluir contato
 app.post('/delete-contact', async (req, res) => {
     try {
-        const { name } = req.body;
-        await Contact.deleteOne({ name });
+        const { id } = req.body;
+        await Contact.findByIdAndDelete(id);
         res.json({ message: 'Contato excluído' });
     } catch (err) {
         res.status(500).json({ error: 'Erro ao excluir contato' });
@@ -59,7 +47,7 @@ app.post('/delete-contact', async (req, res) => {
 });
 
 // Iniciar servidor
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Servidor rodando em http://localhost:${PORT}`);
+    console.log(`Servidor rodando na porta ${PORT}`);
 });
