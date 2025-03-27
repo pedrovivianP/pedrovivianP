@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const uri = "mongodb+srv://pedropassarello:7RrocZ2XF2cFwlfX@cluster0.0fahvdt.mongodb.net/nomeDoBanco?retryWrites=true&w=majority&appName=Cluster0";
 
 mongoose.connect(uri, {
-    useNewUrlParser: true,
     useUnifiedTopology: true
 })
 .then(() => console.log("MongoDB Atlas conectado com sucesso!"))
