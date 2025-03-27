@@ -1,15 +1,17 @@
 const express = require('express');
-const mongoose = require('./database'); // Conexão com o banco
-const Contact = require('./contact'); // Modelo Contact
+const cors = require('cors');
+const mongoose = require('./database'); // Importa a conexão com o banco
+const Contact = require('./contact'); // Importa o modelo Contact
 const path = require('path');
 
 const app = express();
-app.use(express.json());
+app.use(cors()); // Permite requisições externas
+app.use(express.json()); // Garante que o body seja lido corretamente
 
 // Servir arquivos estáticos (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Página principal
+// Servir a página principal
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -17,6 +19,7 @@ app.get('/', (req, res) => {
 // Rota para adicionar contato
 app.post('/add-contact', async (req, res) => {
     try {
+        console.log("Recebendo contato:", req.body); // Debug
         const contact = new Contact(req.body);
         await contact.save();
         res.json(contact);
@@ -36,10 +39,16 @@ app.get('/contacts', async (req, res) => {
 });
 
 // Rota para excluir contato
-app.post('/delete-contact', async (req, res) => {
+app.delete('/delete-contact', async (req, res) => {
     try {
-        const { id } = req.body;
-        await Contact.findByIdAndDelete(id);
+        const { name } = req.body;
+        console.log("Excluindo contato:", name); // Debug
+        const result = await Contact.deleteOne({ name });
+        
+        if (result.deletedCount === 0) {
+            return res.status(404).json({ error: 'Contato não encontrado' });
+        }
+
         res.json({ message: 'Contato excluído' });
     } catch (err) {
         res.status(500).json({ error: 'Erro ao excluir contato' });
@@ -49,5 +58,5 @@ app.post('/delete-contact', async (req, res) => {
 // Iniciar servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta ${PORT}`);
+    console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
