@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
 
 const ContactSchema = new mongoose.Schema({
-    name: String,
-    email: String,
-    phone: String
+    name: { type: String, required: true },
+    email: { type: String, required: true },
+    number: { type: String, required: true }, // Corrigido de "phone" para "number"
+    address: { type: String, required: true } // Adicionado campo "address"
 });
 
 const Contact = mongoose.model('Contact', ContactSchema);
