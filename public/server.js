@@ -2,8 +2,20 @@ const express = require('express');
 const mongoose = require('./database'); // Importa a conexão com o banco
 const Contact = require('./contact'); // Importa o modelo Contact
 const path = require('path');
+const cors = require('cors'); // Importa o pacote cors
 
 const app = express();
+
+// Configuração do CORS para permitir requisições do seu frontend hospedado no Render
+const corsOptions = {
+    origin: 'https://listadecontatos.onrender.com', // Substitua pela URL do seu frontend
+    methods: 'GET, POST, PUT, DELETE', // Métodos permitidos
+    allowedHeaders: 'Content-Type, Authorization', // Cabeçalhos permitidos
+};
+
+// Usar o middleware cors com as opções configuradas
+app.use(cors(corsOptions));
+
 app.use(express.json());
 
 // Servir arquivos estáticos (como o HTML)
