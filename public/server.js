@@ -1,13 +1,15 @@
 const express = require('express');
-const mongoose = require('./database'); 
-const Contact = require('./contact'); 
+const mongoose = require('./database'); // Conexão com o banco
+const Contact = require('./contact'); // Modelo Contact
 const path = require('path');
 
 const app = express();
 app.use(express.json());
+
+// Servir arquivos estáticos (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Servir a página principal
+// Página principal
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -19,7 +21,6 @@ app.post('/add-contact', async (req, res) => {
         await contact.save();
         res.json(contact);
     } catch (err) {
-        console.error("❌ Erro ao salvar contato:", err);
         res.status(500).json({ error: 'Erro ao salvar contato' });
     }
 });
@@ -30,40 +31,23 @@ app.get('/contacts', async (req, res) => {
         const contacts = await Contact.find();
         res.json(contacts);
     } catch (err) {
-        console.error("❌ Erro ao buscar contatos:", err);
         res.status(500).json({ error: 'Erro ao buscar contatos' });
     }
 });
 
 // Rota para excluir contato
-app.delete('/delete-contact/:id', async (req, res) => {
-    console.log("🔹 Rota DELETE acionada");
-    console.log("🔹 URL Recebida:", req.originalUrl);
-    console.log("🔹 ID recebido:", req.params.id);
-
+app.post('/delete-contact', async (req, res) => {
     try {
-        const { id } = req.params;
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            console.log("⚠️ ID inválido:", id);
-            return res.status(400).json({ error: "ID inválido" });
-        }
-
-        const contact = await Contact.findByIdAndDelete(id);
-        if (!contact) {
-            console.log("⚠️ Contato não encontrado no banco:", id);
-            return res.status(404).json({ error: "Contato não encontrado" });
-        }
-
-        console.log("✅ Contato excluído com sucesso:", id);
-        res.json({ message: "Contato excluído com sucesso!" });
+        const { id } = req.body;
+        await Contact.findByIdAndDelete(id);
+        res.json({ message: 'Contato excluído' });
     } catch (err) {
-        console.error("❌ Erro ao excluir contato:", err);
-        res.status(500).json({ error: "Erro ao excluir contato" });
+        res.status(500).json({ error: 'Erro ao excluir contato' });
     }
 });
 
 // Iniciar servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Servidor rodando em http://localhost:${PORT}`);
+    console.log(`Servidor rodando na porta ${PORT}`);
 });
