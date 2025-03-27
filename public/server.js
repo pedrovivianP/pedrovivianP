@@ -8,8 +8,8 @@ const Contact = require('./contact'); // Importa o modelo Contact
 const path = require('path');
 
 const app = express();
-app.use(cors()); // Permite requisições externas
-app.use(express.json()); // Garante que o body seja lido corretamente
+app.use(cors()); 
+app.use(express.json()); 
 
 // Servir arquivos estáticos (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, 'public')));
