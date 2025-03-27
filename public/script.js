@@ -46,7 +46,7 @@ document.getElementById('contactForm').addEventListener('submit', async function
         email: document.getElementById('email').value
     };
     
-    let response = await fetch('http://localhost:3000/add-contact', {
+    let response = await fetch('https://listadecontatos.onrender.com/add-contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(contact)
@@ -63,7 +63,7 @@ document.getElementById('contactForm').addEventListener('submit', async function
 });
 
 async function deleteContact(button, name) {
-    let response = await fetch('http://localhost:3000/delete-contact', {
+    let response = await fetch('https://listadecontatos.onrender.com/delete-contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name })
