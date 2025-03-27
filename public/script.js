@@ -1,4 +1,4 @@
-const SERVER_URL = "https://listadecontatos.onrender.com/"; // Substitua pela URL correta
+const SERVER_URL = "https://listadecontatos.onrender.com"; // Substitua pela URL correta
 
 document.addEventListener("DOMContentLoaded", loadContacts);
 
