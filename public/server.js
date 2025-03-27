@@ -1,3 +1,7 @@
+//O SITE ESTÁ RODANDO NA HOST RENDER:   https://listadecontatos.onrender.com/
+//O SITE ESTÁ RODANDO NA HOST RENDER:   https://listadecontatos.onrender.com/
+//O SITE ESTÁ RODANDO NA HOST RENDER:   https://listadecontatos.onrender.com/
+//O SITE ESTÁ RODANDO NA HOST RENDER:   https://listadecontatos.onrender.com/
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('./database'); // Importa a conexão com o banco

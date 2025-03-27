@@ -1,3 +1,7 @@
+//O SITE ESTÁ RODANDO NA HOST RENDER:   https://listadecontatos.onrender.com/
+//O SITE ESTÁ RODANDO NA HOST RENDER:   https://listadecontatos.onrender.com/
+//O SITE ESTÁ RODANDO NA HOST RENDER:   https://listadecontatos.onrender.com/
+//O SITE ESTÁ RODANDO NA HOST RENDER:   https://listadecontatos.onrender.com/
 const SERVER_URL = "https://listadecontatos.onrender.com"; // Substitua pela URL correta
 
 document.addEventListener("DOMContentLoaded", loadContacts);
