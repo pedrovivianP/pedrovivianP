@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", loadContacts);
 
 async function loadContacts() {
     try {
-        let response = await fetch("https://listadecontatos.onrender.com");
+        let response = await fetch("https://listadecontatos.onrender.com/contacts");
         let contacts = await response.json();
 
         let contactList = document.getElementById("contactList");
@@ -18,7 +18,7 @@ async function loadContacts() {
                                 <div class="dropdown">
                                     <button class="btn btn-light btn-sm" type="button" data-bs-toggle="dropdown">⋮</button>
                                     <ul class="dropdown-menu">
-                                        <li><button class="dropdown-item text-danger" onclick="deleteContact(this, '${contact.name}')">Excluir</button></li>
+                                        <li><button class="dropdown-item text-danger" onclick="deleteContact('${contact._id}')">Excluir</button></li>
                                     </ul>
                                 </div>
                             </div>
@@ -46,7 +46,7 @@ document.getElementById('contactForm').addEventListener('submit', async function
         email: document.getElementById('email').value
     };
     
-    let response = await fetch('https://listadecontatos.onrender.com', {
+    let response = await fetch('https://listadecontatos.onrender.com/add-contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(contact)
@@ -62,11 +62,11 @@ document.getElementById('contactForm').addEventListener('submit', async function
     }
 });
 
-async function deleteContact(button, name) {
-    let response = await fetch('https://listadecontatos.onrender.com', {
+async function deleteContact(id) {
+    let response = await fetch('https://listadecontatos.onrender.com/delete-contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name })
+        body: JSON.stringify({ id })
     });
 
     if (response.ok) {
