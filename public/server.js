@@ -39,7 +39,7 @@ app.get('/contacts', async (req, res) => {
 });
 
 // Rota para excluir contato
-app.delete('/delete-contact', async (req, res) => {
+app.post('/delete-contact', async (req, res) => {
     try {
         const { name } = req.body;
         console.log("Excluindo contato:", name); // Debug
