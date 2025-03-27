@@ -19,6 +19,7 @@ app.post('/add-contact', async (req, res) => {
         await contact.save();
         res.json(contact);
     } catch (err) {
+        console.error("❌ Erro ao salvar contato:", err);
         res.status(500).json({ error: 'Erro ao salvar contato' });
     }
 });
@@ -29,21 +30,34 @@ app.get('/contacts', async (req, res) => {
         const contacts = await Contact.find();
         res.json(contacts);
     } catch (err) {
+        console.error("❌ Erro ao buscar contatos:", err);
         res.status(500).json({ error: 'Erro ao buscar contatos' });
     }
 });
 
 // Rota para excluir contato
 app.delete('/delete-contact/:id', async (req, res) => {
+    console.log("🔹 Rota DELETE acionada");
+    console.log("🔹 URL Recebida:", req.originalUrl);
+    console.log("🔹 ID recebido:", req.params.id);
+
     try {
         const { id } = req.params;
-        if (!id) return res.status(400).json({ error: "ID não fornecido" });
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            console.log("⚠️ ID inválido:", id);
+            return res.status(400).json({ error: "ID inválido" });
+        }
 
         const contact = await Contact.findByIdAndDelete(id);
-        if (!contact) return res.status(404).json({ error: "Contato não encontrado" });
+        if (!contact) {
+            console.log("⚠️ Contato não encontrado no banco:", id);
+            return res.status(404).json({ error: "Contato não encontrado" });
+        }
 
+        console.log("✅ Contato excluído com sucesso:", id);
         res.json({ message: "Contato excluído com sucesso!" });
     } catch (err) {
+        console.error("❌ Erro ao excluir contato:", err);
         res.status(500).json({ error: "Erro ao excluir contato" });
     }
 });
