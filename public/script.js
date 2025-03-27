@@ -67,7 +67,7 @@ document.getElementById('contactForm').addEventListener('submit', async function
 
 async function deleteContact(button, name) {
     let response = await fetch(`${SERVER_URL}/delete-contact`, {
-        method: 'DELETE',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name })
     });
