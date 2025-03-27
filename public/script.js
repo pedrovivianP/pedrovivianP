@@ -6,11 +6,11 @@ async function loadContacts() {
         let contacts = await response.json();
 
         let contactList = document.getElementById("contactList");
-        contactList.innerHTML = "";
+        contactList.innerHTML = ""; // Limpa a lista antes de preencher
 
         contacts.forEach(contact => {
             let contactCard = `
-                <div class="col-md-4" data-id="${contact._id}">
+                <div class="col-md-4">
                     <div class="card mb-3 contact-card">
                         <div class="card-body">
                             <div class="d-flex justify-content-between">
@@ -18,7 +18,7 @@ async function loadContacts() {
                                 <div class="dropdown">
                                     <button class="btn btn-light btn-sm" type="button" data-bs-toggle="dropdown">⋮</button>
                                     <ul class="dropdown-menu">
-                                        <li><button class="dropdown-item text-danger" onclick="deleteContact('${contact._id}', this)">Excluir</button></li>
+                                        <li><button class="dropdown-item text-danger" onclick="deleteContact('${contact._id}')">Excluir</button></li>
                                     </ul>
                                 </div>
                             </div>
@@ -32,7 +32,7 @@ async function loadContacts() {
             contactList.innerHTML += contactCard;
         });
     } catch (error) {
-        console.error("❌ Erro ao carregar contatos:", error);
+        console.error("Erro ao carregar contatos:", error);
     }
 }
 
@@ -53,34 +53,25 @@ document.getElementById('contactForm').addEventListener('submit', async function
     });
 
     if (response.ok) {
-        console.log("✅ Contato adicionado com sucesso!");
-        loadContacts();
+        loadContacts(); // Recarrega a lista após adicionar contato
         document.getElementById('contactForm').reset();
         let modal = new bootstrap.Modal(document.getElementById('addContactModal'));
         modal.hide();
     } else {
-        console.error("❌ Erro ao adicionar contato");
+        console.error("Erro ao adicionar contato");
     }
 });
 
-async function deleteContact(id, button) {
-    if (!id) {
-        console.error("❌ ID do contato não encontrado!");
-        return;
-    }
-
-    console.log(`🟡 Tentando excluir contato com ID: ${id}`);
-    console.log(`🟡 URL da requisição: https://listadecontatos.onrender.com/delete-contact/${id}`);
-
-    let response = await fetch(`https://listadecontatos.onrender.com/delete-contact/${id}`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' }
+async function deleteContact(id) {
+    let response = await fetch('https://listadecontatos.onrender.com/delete-contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
     });
 
     if (response.ok) {
-        console.log("✅ Contato excluído com sucesso");
-        button.closest('.col-md-4').remove();
+        loadContacts(); // Atualiza a lista após excluir
     } else {
-        console.error("❌ Erro ao excluir contato:", response.status);
+        console.error("Erro ao excluir contato");
     }
 }
