@@ -42,6 +42,7 @@
         </div>
     </div>
 
+    <!-- Modal Adicionar Contato -->
     <div class="modal fade" id="addContactModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -53,24 +54,56 @@
                     <form id="contactForm">
                         <div class="mb-3">
                             <label class="form-label">Nome</label>
-                            <input type="text" class="form-control" id="name" placeholder="Ex. Maria da Silva" required>
+                            <input type="text" class="form-control" id="name" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Número</label>
-                            <input type="text" class="form-control" id="number" placeholder="(11) 00000-000"  required>
+                            <input type="text" class="form-control" id="number" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Endereço</label>
-                            <input type="text" class="form-control" placeholder="Ex. Rua XXXX xxxx"  id="address">
+                            <input type="text" class="form-control" id="address">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Email</label>
-                            <input type="email" class="form-control" placeholder="Ex. xxxxxx@gmail.com"  id="email">
+                            <input type="email" class="form-control" id="email">
                         </div>
                         <button type="submit" class="btn btn-primary">Salvar</button>
                     </form>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal Editar Contato -->
+    <div class="modal fade" id="editContactModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <form class="modal-content" id="editForm">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Contato</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editId">
+                    <div class="mb-3">
+                        <label class="form-label">Nome</label>
+                        <input type="text" class="form-control" id="editName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Número</label>
+                        <input type="text" class="form-control" id="editNumber" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Endereço</label>
+                        <input type="text" class="form-control" id="editAddress">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="editEmail">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Atualizar</button>
+                </div>
+            </form>
         </div>
     </div>
 
