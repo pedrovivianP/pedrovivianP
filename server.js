@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-const mongoose = require('./database');
-const Contact = require('./Contact');
+const mongoose = require('./database'); // Conexão com MongoDB
+const Contact = require('./Contact'); // Modelo do contato
 const path = require('path');
 
 const app = express();
@@ -13,7 +13,6 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Adicionar contato
 app.post('/add-contact', async (req, res) => {
     try {
         const contact = new Contact(req.body);
@@ -24,7 +23,6 @@ app.post('/add-contact', async (req, res) => {
     }
 });
 
-// Listar contatos
 app.get('/contacts', async (req, res) => {
     try {
         const contacts = await Contact.find();
@@ -34,29 +32,31 @@ app.get('/contacts', async (req, res) => {
     }
 });
 
-// Excluir contato
 app.post('/delete-contact', async (req, res) => {
     try {
-        const { name } = req.body;
-        const result = await Contact.deleteOne({ name });
+        const { id } = req.body;
+        const result = await Contact.deleteOne({ _id: id });
+
         if (result.deletedCount === 0) {
             return res.status(404).json({ error: 'Contato não encontrado' });
         }
+
         res.json({ message: 'Contato excluído' });
     } catch (err) {
         res.status(500).json({ error: 'Erro ao excluir contato' });
     }
 });
 
-// Atualizar contato
 app.put('/update-contact/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const updatedContact = await Contact.findByIdAndUpdate(id, req.body, { new: true });
-        if (!updatedContact) {
+        const updated = await Contact.findByIdAndUpdate(id, req.body, { new: true });
+
+        if (!updated) {
             return res.status(404).json({ error: 'Contato não encontrado' });
         }
-        res.json(updatedContact);
+
+        res.json(updated);
     } catch (err) {
         res.status(500).json({ error: 'Erro ao atualizar contato' });
     }

@@ -1,6 +1,3 @@
-//O SITE ESTÁ RODANDO NA HOST ONRENDER COM O BANCO DE DADOS MONGODB:   https://listadecontatos.onrender.com/
-//O SITE ESTÁ RODANDO NA HOST ONRENDER COM O BANCO DE DADOS MONGODB:   https://listadecontatos.onrender.com/
-//O SITE ESTÁ RODANDO NA HOST ONRENDER COM O BANCO DE DADOS MONGODB:   https://listadecontatos.onrender.com/
 const SERVER_URL = "https://listadecontatos.onrender.com";
 
 document.addEventListener("DOMContentLoaded", loadContacts);
@@ -43,7 +40,7 @@ async function loadContacts() {
 
 document.getElementById('contactForm').addEventListener('submit', async function(event) {
     event.preventDefault();
-    
+
     let contact = {
         name: document.getElementById('name').value,
         number: document.getElementById('number').value,
@@ -66,11 +63,11 @@ document.getElementById('contactForm').addEventListener('submit', async function
     }
 });
 
-async function deleteContact(button, name) {
+async function deleteContact(id) {
     let response = await fetch(`${SERVER_URL}/delete-contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name })
+        body: JSON.stringify({ id })
     });
 
     if (response.ok) {
@@ -80,7 +77,6 @@ async function deleteContact(button, name) {
     }
 }
 
-// EDITAR CONTATO
 function openEditModal(id, name, number, address, email) {
     document.getElementById('editId').value = id;
     document.getElementById('editName').value = name;
