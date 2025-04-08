@@ -4,7 +4,7 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('./database'); // Importa a conexão com o banco
-const Contact = require('./contact'); // Importa o modelo Contact
+const Contact = require('./Contact'); // Importa o modelo Contact
 const path = require('path');
 
 const app = express();
