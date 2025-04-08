@@ -66,15 +66,15 @@ document.getElementById('contactForm').addEventListener('submit', async function
     }
 });
 
-async function deleteContact(id) {
+async function deleteContact(button, name) {
     let response = await fetch(`${SERVER_URL}/delete-contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id })
+        body: JSON.stringify({ name })
     });
 
     if (response.ok) {
-        loadContacts();
+        loadContacts(); // Atualiza a lista após excluir
     } else {
         console.error("Erro ao excluir contato");
     }
