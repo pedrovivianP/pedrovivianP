@@ -8,6 +8,7 @@ const ContactSchema = new mongoose.Schema({
     email: { type: String, required: true },
     number: { type: String, required: true }, 
     address: { type: String, required: true } 
+    favorite: { type: Boolean, default: false } // novo campo
 });
 
 const Contact = mongoose.model('Contact', ContactSchema);

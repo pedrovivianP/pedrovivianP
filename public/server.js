@@ -47,6 +47,28 @@ app.post('/delete-contact', async (req, res) => {
     }
 });
 
+app.get('/favorites', async (req, res) => {
+    try {
+        const favorites = await Contact.find({ favorite: true });
+        res.json(favorites);
+    } catch (err) {
+        res.status(500).json({ error: 'Erro ao buscar favoritos' });
+    }
+});
+
+app.put('/toggle-favorite/:id', async (req, res) => {
+    try {
+        const contact = await Contact.findById(req.params.id);
+        if (!contact) return res.status(404).json({ error: 'Contato não encontrado' });
+
+        contact.favorite = !contact.favorite;
+        await contact.save();
+        res.json(contact);
+    } catch (err) {
+        res.status(500).json({ error: 'Erro ao atualizar favorito' });
+    }
+});
+
 app.put('/update-contact/:id', async (req, res) => {
     try {
         const { id } = req.params;
