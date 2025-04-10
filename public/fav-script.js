@@ -5,6 +5,15 @@ const SERVER_URL = "https://listadecontatos.onrender.com";
 
 document.addEventListener("DOMContentLoaded", loadFavorites);
 
+document.addEventListener("DOMContentLoaded", () => {
+    loadContacts();
+
+    // Aplica a máscara nos campos de telefone
+    formatPhone(document.getElementById('number'));       // Adicionar
+    formatPhone(document.getElementById('editNumber'));   // Editar
+});
+
+
 async function loadFavorites() {
     try {
         const response = await fetch(`${SERVER_URL}/favorites`);
@@ -102,3 +111,17 @@ async function toggleFavorite(id) {
         console.error("Erro ao remover dos favoritos");
     }
 }
+
+// Função para formatar número de telefone
+function formatPhone(input) {
+    input.addEventListener('input', function (e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 11) value = value.slice(0, 11);
+
+        let formatted = '';
+        if (value.length > 0) formatted += '(' + value.substring(0, 2);
+        if (value.length >= 3) formatted += ') ' + value.substring(2, 7);
+        if (value.length >= 8) formatted += '-' + value.substring(7, 11);
+
+        e.target.value = formatted;
+    });
