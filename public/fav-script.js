@@ -5,15 +5,6 @@ const SERVER_URL = "https://listadecontatos.onrender.com";
 
 document.addEventListener("DOMContentLoaded", loadFavorites);
 
-document.addEventListener("DOMContentLoaded", () => {
-    loadContacts();
-
-    // Aplica a máscara nos campos de telefone
-    formatPhone(document.getElementById('number'));       // Adicionar
-    formatPhone(document.getElementById('editNumber'));   // Editar
-});
-
-
 async function loadFavorites() {
     try {
         const response = await fetch(`${SERVER_URL}/favorites`);
