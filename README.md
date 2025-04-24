@@ -13,22 +13,29 @@ Express
 -------------------------------------
 
 **📦 Instalação**
+
 Clone o repositório:
 
-git clone https://github.com/pedrovivianP/pedrovivianP.git
+
+git clone https://github.com/pedrovivianP/pedrovivianP
+
 cd pedrovivianP
 
 Instale as dependências:
 
+
 npm install
+
 Isso instalará o Express e todas as outras dependências listadas no package.json.
 
 -------------------------------------
 
 **▶️ Executando o Projeto**
+
 Para iniciar o servidor local:
 
 node server.js
+
 O servidor estará disponível em http://localhost:3000 (ou na porta configurada no seu projeto).
 
 -------------------------------------
