@@ -2,8 +2,8 @@
 //O SITE ESTÁ RODANDO NA HOST ONRENDER COM O BANCO DE DADOS MONGODB:   https://listadecontatos.onrender.com/
 //O SITE ESTÁ RODANDO NA HOST ONRENDER COM O BANCO DE DADOS MONGODB:   https://listadecontatos.onrender.com/
 const SERVER_URL = "https://listadecontatos.onrender.com";
-let isSorted = false; // Controla o estado da ordenação
-let originalContacts = []; // Armazena os contatos na ordem original
+let isSorted = false;
+let originalFavorites = [];
 
 document.addEventListener("DOMContentLoaded", () => {
     loadFavorites();
@@ -12,27 +12,31 @@ document.addEventListener("DOMContentLoaded", () => {
     if (sortBtn) {
         sortBtn.addEventListener('click', () => {
             isSorted = !isSorted;
-            renderContacts();
+            renderFavorites();
             sortBtn.textContent = isSorted ? "↻ Ordem Original" : "Ordenar A-Z";
         });
     }
 });
 
-let currentFavorites = [];
-
 async function loadFavorites() {
     try {
         const response = await fetch(`${SERVER_URL}/favorites`);
-        currentFavorites = await response.json();
-        renderFavorites(currentFavorites);
+        originalFavorites = await response.json(); // Atualiza a lista original
+        renderFavorites();
     } catch (error) {
         console.error("Erro ao carregar favoritos:", error);
     }
 }
 
-function renderFavorites(favorites) {
+function renderFavorites() {
     const favoriteList = document.getElementById("favoriteList");
     favoriteList.innerHTML = "";
+
+    let favorites = [...originalFavorites]; // Cópia da lista
+
+    if (isSorted) {
+        favorites.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+    }
 
     favorites.forEach(contact => {
         const contactCard = `
@@ -59,11 +63,6 @@ function renderFavorites(favorites) {
         `;
         favoriteList.innerHTML += contactCard;
     });
-}
-
-function sortFavoritesAlphabetically() {
-    const sorted = [...currentFavorites].sort((a, b) => a.name.localeCompare(b.name));
-    renderFavorites(sorted);
 }
 
 function openEditModal(id, name, number, address, email) {
