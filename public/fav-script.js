@@ -6,11 +6,14 @@ const SERVER_URL = "https://listadecontatos.onrender.com";
 document.addEventListener("DOMContentLoaded", () => {
     loadFavorites();
 
-    const sortBtn = document.createElement("button");
-    sortBtn.textContent = "Ordenar A-Z";
-    sortBtn.className = "btn btn-outline-primary mb-3";
-    sortBtn.addEventListener("click", sortFavoritesAlphabetically);
-    document.querySelector(".contact-container").prepend(sortBtn);
+    const sortBtn = document.getElementById('sortAlphaBtn');
+    if (sortBtn) {
+        sortBtn.addEventListener('click', () => {
+            isSorted = !isSorted;
+            renderContacts();
+            sortBtn.textContent = isSorted ? "↻ Ordem Original" : "Ordenar A-Z";
+        });
+    }
 });
 
 let currentFavorites = [];
