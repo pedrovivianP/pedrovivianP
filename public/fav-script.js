@@ -2,6 +2,8 @@
 //O SITE ESTÁ RODANDO NA HOST ONRENDER COM O BANCO DE DADOS MONGODB:   https://listadecontatos.onrender.com/
 //O SITE ESTÁ RODANDO NA HOST ONRENDER COM O BANCO DE DADOS MONGODB:   https://listadecontatos.onrender.com/
 const SERVER_URL = "https://listadecontatos.onrender.com";
+let isSorted = false; // Controla o estado da ordenação
+let originalContacts = []; // Armazena os contatos na ordem original
 
 document.addEventListener("DOMContentLoaded", () => {
     loadFavorites();
