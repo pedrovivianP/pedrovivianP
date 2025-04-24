@@ -42,11 +42,17 @@ O servidor estará disponível em http://localhost:3000 (ou na porta configurada
 
 **📁 Estrutura do Projeto**
 pedrovivianP/
+
 ├── public/             # Arquivos estáticos (HTML, CSS, JS)
+
 ├── Contact.js          # Lógica relacionada ao contato
+
 ├── database.js         # Configuração do banco de dados
+
 ├── server.js           # Arquivo principal do servidor
+
 ├── package.json        # Informações e dependências do projeto
+
 └── package-lock.json   # Versões exatas das dependências
 
 -------------------------------------
