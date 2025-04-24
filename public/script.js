@@ -23,54 +23,61 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-async function loadContacts(sorted = false) {
+async function loadContacts() {
     try {
         let response = await fetch(`${SERVER_URL}/contacts`);
         let contacts = await response.json();
 
-        if (sorted) {
-            contacts.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
-        }
-
-        let contactList = document.getElementById("contactList");
-        contactList.innerHTML = "";
-
-        contacts.forEach(contact => {
-            let contactCard = `
-                <div class="col-md-4">
-                    <div class="card mb-3 contact-card">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <h5 class="card-title">${contact.name}</h5>
-                                <div class="dropdown">
-                                    <button class="btn btn-light btn-sm" type="button" data-bs-toggle="dropdown">⋮</button>
-                                    <ul class="dropdown-menu">
-                                        <li>
-                                            <button class="dropdown-item" onclick="toggleFavorite('${contact._id}', ${contact.favorite})">
-                                                ${contact.favorite ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos'}
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button class="dropdown-item" onclick="openEditModal('${contact._id}', '${contact.name}', '${contact.number}', '${contact.address}', '${contact.email}')">Editar</button>
-                                        </li>
-                                        <li>
-                                            <button class="dropdown-item text-danger" onclick="deleteContact('${contact._id}')">Excluir</button>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <p class="card-text">📞 ${contact.number || 'Não informado'}</p>
-                            <p class="card-text">🏠 ${contact.address || 'Não informado'}</p>
-                            <p class="card-text">✉️ ${contact.email || 'Não informado'}</p>
-                            ${contact.favorite ? '<span class="badge bg-warning text-dark">★ Favorito</span>' : ''}
-                        </div>
-                    </div>
-                </div>`;
-            contactList.innerHTML += contactCard;
-        });
+        originalContacts = contacts;
+        renderContacts();
     } catch (error) {
         console.error("Erro ao carregar contatos:", error);
     }
+}
+
+function renderContacts() {
+    let contacts = [...originalContacts]; // Faz uma cópia da lista
+
+    if (isSorted) {
+        contacts.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+    }
+
+    let contactList = document.getElementById("contactList");
+    contactList.innerHTML = "";
+
+    contacts.forEach(contact => {
+        let contactCard = `
+            <div class="col-md-4">
+                <div class="card mb-3 contact-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h5 class="card-title">${contact.name}</h5>
+                            <div class="dropdown">
+                                <button class="btn btn-light btn-sm" type="button" data-bs-toggle="dropdown">⋮</button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <button class="dropdown-item" onclick="toggleFavorite('${contact._id}', ${contact.favorite})">
+                                            ${contact.favorite ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos'}
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="dropdown-item" onclick="openEditModal('${contact._id}', '${contact.name}', '${contact.number}', '${contact.address}', '${contact.email}')">Editar</button>
+                                    </li>
+                                    <li>
+                                        <button class="dropdown-item text-danger" onclick="deleteContact('${contact._id}')">Excluir</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <p class="card-text">📞 ${contact.number || 'Não informado'}</p>
+                        <p class="card-text">🏠 ${contact.address || 'Não informado'}</p>
+                        <p class="card-text">✉️ ${contact.email || 'Não informado'}</p>
+                        ${contact.favorite ? '<span class="badge bg-warning text-dark">★ Favorito</span>' : ''}
+                    </div>
+                </div>
+            </div>`;
+        contactList.innerHTML += contactCard;
+    });
 }
 
 document.getElementById('contactForm').addEventListener('submit', async function(event) {
@@ -106,7 +113,7 @@ async function deleteContact(id) {
     });
 
     if (response.ok) {
-        loadContacts(); // Atualiza a lista após excluir
+        loadContacts();
     } else {
         console.error("Erro ao excluir contato");
     }
@@ -148,7 +155,6 @@ document.getElementById('editForm').addEventListener('submit', async function(ev
     }
 });
 
-// Favoritar/desfavoritar
 async function toggleFavorite(id, currentStatus) {
     try {
         await fetch(`${SERVER_URL}/update-contact/${id}`, {
@@ -156,13 +162,12 @@ async function toggleFavorite(id, currentStatus) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ favorite: !currentStatus })
         });
-        loadContacts(); // Recarrega a lista
+        loadContacts();
     } catch (err) {
         console.error("Erro ao atualizar favorito:", err);
     }
 }
 
-// Função para formatar número de telefone
 function formatPhone(input) {
     input.addEventListener('input', function (e) {
         let value = e.target.value.replace(/\D/g, '');
