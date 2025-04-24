@@ -3,44 +3,62 @@
 //O SITE ESTÁ RODANDO NA HOST ONRENDER COM O BANCO DE DADOS MONGODB:   https://listadecontatos.onrender.com/
 const SERVER_URL = "https://listadecontatos.onrender.com";
 
-document.addEventListener("DOMContentLoaded", loadFavorites);
+document.addEventListener("DOMContentLoaded", () => {
+    loadFavorites();
+
+    const sortBtn = document.createElement("button");
+    sortBtn.textContent = "Ordenar A-Z";
+    sortBtn.className = "btn btn-outline-primary mb-3";
+    sortBtn.addEventListener("click", sortFavoritesAlphabetically);
+    document.querySelector(".contact-container").prepend(sortBtn);
+});
+
+let currentFavorites = [];
 
 async function loadFavorites() {
     try {
         const response = await fetch(`${SERVER_URL}/favorites`);
-        const favorites = await response.json();
-
-        const favoriteList = document.getElementById("favoriteList");
-        favoriteList.innerHTML = "";
-
-        favorites.forEach(contact => {
-            const contactCard = `
-                <div class="col-md-4">
-                    <div class="card mb-3 contact-card">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between">
-                                <h5 class="card-title">${contact.name}</h5>
-                                <div class="dropdown">
-                                    <button class="btn btn-light btn-sm" data-bs-toggle="dropdown">⋮</button>
-                                    <ul class="dropdown-menu">
-                                        <li><button class="dropdown-item" onclick="openEditModal('${contact._id}', '${contact.name}', '${contact.number}', '${contact.address}', '${contact.email}')">Editar</button></li>
-                                        <li><button class="dropdown-item text-danger" onclick="deleteContact('${contact._id}')">Excluir</button></li>
-                                        <li><button class="dropdown-item" onclick="toggleFavorite('${contact._id}')">Remover dos Favoritos</button></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <p class="card-text">📞 ${contact.number || 'Não informado'}</p>
-                            <p class="card-text">🏠 ${contact.address || 'Não informado'}</p>
-                            <p class="card-text">✉️ ${contact.email || 'Não informado'}</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-            favoriteList.innerHTML += contactCard;
-        });
+        currentFavorites = await response.json();
+        renderFavorites(currentFavorites);
     } catch (error) {
         console.error("Erro ao carregar favoritos:", error);
     }
+}
+
+function renderFavorites(favorites) {
+    const favoriteList = document.getElementById("favoriteList");
+    favoriteList.innerHTML = "";
+
+    favorites.forEach(contact => {
+        const contactCard = `
+            <div class="col-md-4">
+                <div class="card mb-3 contact-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <h5 class="card-title">${contact.name}</h5>
+                            <div class="dropdown">
+                                <button class="btn btn-light btn-sm" data-bs-toggle="dropdown">⋮</button>
+                                <ul class="dropdown-menu">
+                                    <li><button class="dropdown-item" onclick="openEditModal('${contact._id}', '${contact.name}', '${contact.number}', '${contact.address}', '${contact.email}')">Editar</button></li>
+                                    <li><button class="dropdown-item text-danger" onclick="deleteContact('${contact._id}')">Excluir</button></li>
+                                    <li><button class="dropdown-item" onclick="toggleFavorite('${contact._id}')">Remover dos Favoritos</button></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <p class="card-text">📞 ${contact.number || 'Não informado'}</p>
+                        <p class="card-text">🏠 ${contact.address || 'Não informado'}</p>
+                        <p class="card-text">✉️ ${contact.email || 'Não informado'}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+        favoriteList.innerHTML += contactCard;
+    });
+}
+
+function sortFavoritesAlphabetically() {
+    const sorted = [...currentFavorites].sort((a, b) => a.name.localeCompare(b.name));
+    renderFavorites(sorted);
 }
 
 function openEditModal(id, name, number, address, email) {
