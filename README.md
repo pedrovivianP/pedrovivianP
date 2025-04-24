@@ -21,10 +21,12 @@ git clone https://github.com/pedrovivianP/pedrovivianP
 
 cd pedrovivianP
 
+
 Instale as dependências:
 
 
 npm install
+
 
 Isso instalará o Express e todas as outras dependências listadas no package.json.
 
@@ -32,9 +34,11 @@ Isso instalará o Express e todas as outras dependências listadas no package.js
 
 **▶️ Executando o Projeto**
 
-Para iniciar o servidor local:
+Para iniciar o servidor local execute no terminal, com o node já instalado:
+
 
 node server.js
+
 
 O servidor estará disponível em http://localhost:3000 (ou na porta configurada no seu projeto).
 
@@ -58,5 +62,6 @@ pedrovivianP/
 -------------------------------------
 
 **📝 Licença**
+
 Este projeto está licenciado sob a MIT License.
 
