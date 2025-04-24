@@ -9,12 +9,24 @@ document.addEventListener("DOMContentLoaded", () => {
     // Aplica a máscara nos campos de telefone
     formatPhone(document.getElementById('number'));       // Adicionar
     formatPhone(document.getElementById('editNumber'));   // Editar
+
+    // Botão de ordenação A-Z
+    const sortBtn = document.getElementById('sortAlphaBtn');
+    if (sortBtn) {
+        sortBtn.addEventListener('click', () => {
+            loadContacts(true);
+        });
+    }
 });
 
-async function loadContacts() {
+async function loadContacts(sorted = false) {
     try {
         let response = await fetch(`${SERVER_URL}/contacts`);
         let contacts = await response.json();
+
+        if (sorted) {
+            contacts.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+        }
 
         let contactList = document.getElementById("contactList");
         contactList.innerHTML = "";
