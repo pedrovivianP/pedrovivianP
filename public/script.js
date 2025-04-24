@@ -10,11 +10,13 @@ document.addEventListener("DOMContentLoaded", () => {
     formatPhone(document.getElementById('number'));       // Adicionar
     formatPhone(document.getElementById('editNumber'));   // Editar
 
-    // Botão de ordenação A-Z
+    // Botão de ordenação A-Z / ordem original
     const sortBtn = document.getElementById('sortAlphaBtn');
     if (sortBtn) {
         sortBtn.addEventListener('click', () => {
-            loadContacts(true);
+            isSorted = !isSorted;
+            renderContacts();
+            sortBtn.textContent = isSorted ? "↻ Ordem Original" : "Ordenar A-Z";
         });
     }
 });
