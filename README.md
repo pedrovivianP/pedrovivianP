@@ -1,5 +1,6 @@
 **pedrovivianP**
-Projeto Node.js utilizando Express para [descrição breve do propósito do projeto].
+
+Projeto Node.js utilizando Express
 
 -------------------------------------
 
