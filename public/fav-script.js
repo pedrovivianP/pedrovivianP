@@ -21,10 +21,11 @@ document.addEventListener("DOMContentLoaded", () => {
 async function loadFavorites() {
     try {
         const response = await fetch(`${SERVER_URL}/favorites`);
-        originalFavorites = await response.json(); // Atualiza a lista original
+        originalFavorites = await response.json();
         renderFavorites();
     } catch (error) {
         console.error("Erro ao carregar favoritos:", error);
+        showToast("Erro ao carregar favoritos", "danger");
     }
 }
 
@@ -32,7 +33,7 @@ function renderFavorites() {
     const favoriteList = document.getElementById("favoriteList");
     favoriteList.innerHTML = "";
 
-    let favorites = [...originalFavorites]; // Cópia da lista
+    let favorites = [...originalFavorites];
 
     if (isSorted) {
         favorites.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
@@ -85,42 +86,92 @@ document.getElementById('editForm').addEventListener('submit', async function (e
         email: document.getElementById('editEmail').value
     };
 
-    const response = await fetch(`${SERVER_URL}/update-contact/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedContact)
-    });
+    try {
+        const response = await fetch(`${SERVER_URL}/update-contact/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedContact)
+        });
 
-    if (response.ok) {
-        loadFavorites();
-        bootstrap.Modal.getInstance(document.getElementById('editContactModal')).hide();
-    } else {
-        console.error("Erro ao atualizar contato");
+        if (response.ok) {
+            loadFavorites();
+            bootstrap.Modal.getInstance(document.getElementById('editContactModal')).hide();
+            showToast("Contato atualizado com sucesso", "success");
+        } else {
+            showToast("Erro ao atualizar contato", "danger");
+        }
+    } catch (err) {
+        console.error("Erro ao atualizar contato:", err);
+        showToast("Erro ao atualizar contato", "danger");
     }
 });
 
 async function deleteContact(id) {
-    const response = await fetch(`${SERVER_URL}/delete-contact`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id })
-    });
+    try {
+        const response = await fetch(`${SERVER_URL}/delete-contact`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id })
+        });
 
-    if (response.ok) {
-        loadFavorites();
-    } else {
-        console.error("Erro ao excluir contato");
+        if (response.ok) {
+            loadFavorites();
+            showToast("Contato excluído com sucesso", "success");
+        } else {
+            showToast("Erro ao excluir contato", "danger");
+        }
+    } catch (err) {
+        console.error("Erro ao excluir contato:", err);
+        showToast("Erro ao excluir contato", "danger");
     }
 }
 
 async function toggleFavorite(id) {
-    const response = await fetch(`${SERVER_URL}/toggle-favorite/${id}`, {
-        method: 'PUT'
-    });
+    try {
+        const response = await fetch(`${SERVER_URL}/toggle-favorite/${id}`, {
+            method: 'PUT'
+        });
 
-    if (response.ok) {
-        loadFavorites();
-    } else {
-        console.error("Erro ao remover dos favoritos");
+        if (response.ok) {
+            loadFavorites();
+            showToast("Contato removido dos favoritos", "success");
+        } else {
+            showToast("Erro ao atualizar favorito", "danger");
+        }
+    } catch (err) {
+        console.error("Erro ao atualizar favorito:", err);
+        showToast("Erro ao atualizar favorito", "danger");
     }
+}
+
+// Toast visual no canto inferior esquerdo
+function showToast(message, type = "info") {
+    const toastContainer = document.getElementById('toast-container') || createToastContainer();
+    const toast = document.createElement('div');
+    toast.className = `toast align-items-center text-bg-${type} border-0 show`;
+    toast.setAttribute('role', 'alert');
+    toast.style.marginBottom = '10px';
+    toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">${message}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    `;
+    toastContainer.appendChild(toast);
+
+    setTimeout(() => {
+        toast.remove();
+    }, 4000);
+}
+
+function createToastContainer() {
+    const container = document.createElement('div');
+    container.id = 'toast-container';
+    container.style.position = 'fixed';
+    container.style.bottom = '20px';
+    container.style.left = '20px';
+    container.style.zIndex = '9999';
+    container.style.maxWidth = '300px';
+    document.body.appendChild(container);
+    return container;
 }
