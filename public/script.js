@@ -2,17 +2,15 @@
 //O SITE ESTÁ RODANDO NA HOST ONRENDER COM O BANCO DE DADOS MONGODB:   https://listadecontatos.onrender.com/
 //O SITE ESTÁ RODANDO NA HOST ONRENDER COM O BANCO DE DADOS MONGODB:   https://listadecontatos.onrender.com/
 const SERVER_URL = "https://listadecontatos.onrender.com";
-let isSorted = false; // Controla o estado da ordenação
-let originalContacts = []; // Armazena os contatos na ordem original
+let isSorted = false;
+let originalContacts = [];
 
 document.addEventListener("DOMContentLoaded", () => {
     loadContacts();
 
-    // Aplica a máscara nos campos de telefone
-    formatPhone(document.getElementById('number'));       // Adicionar
-    formatPhone(document.getElementById('editNumber'));   // Editar
+    formatPhone(document.getElementById('number'));
+    formatPhone(document.getElementById('editNumber'));
 
-    // Botão de ordenação A-Z / ordem original
     const sortBtn = document.getElementById('sortAlphaBtn');
     if (sortBtn) {
         sortBtn.addEventListener('click', () => {
@@ -32,11 +30,12 @@ async function loadContacts() {
         renderContacts();
     } catch (error) {
         console.error("Erro ao carregar contatos:", error);
+        showToast("Erro ao carregar contatos", "danger");
     }
 }
 
 function renderContacts() {
-    let contacts = [...originalContacts]; // Faz uma cópia da lista
+    let contacts = [...originalContacts];
 
     if (isSorted) {
         contacts.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
@@ -89,31 +88,26 @@ document.getElementById('contactForm').addEventListener('submit', async function
     let email = document.getElementById('email').value.trim();
 
     if (!name || !number || !address || !email) {
-        alert("Por favor, preencha todos os campos.");
+        showToast("Preencha todos os campos!", "warning");
         return;
     }
 
     let contact = { name, number, address, email };
 
-    try {
-        let response = await fetch(`${SERVER_URL}/add-contact`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(contact)
-        });
+    let response = await fetch(`${SERVER_URL}/add-contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(contact)
+    });
 
-        if (response.ok) {
-            loadContacts();
-            document.getElementById('contactForm').reset();
-            bootstrap.Modal.getInstance(document.getElementById('addContactModal')).hide();
-            alert("Contato salvo com sucesso!");
-        } else {
-            let errorData = await response.json();
-            alert("Erro ao salvar contato: " + (errorData.message || "Erro desconhecido."));
-        }
-    } catch (err) {
-        console.error("Erro ao adicionar contato:", err);
-        alert("Erro ao salvar contato. Verifique sua conexão ou tente novamente mais tarde.");
+    if (response.ok) {
+        loadContacts();
+        document.getElementById('contactForm').reset();
+        bootstrap.Modal.getInstance(document.getElementById('addContactModal')).hide();
+        showToast("Contato salvo com sucesso!", "success");
+    } else {
+        const data = await response.json();
+        showToast(data.message || "Erro ao salvar contato", "danger");
     }
 });
 
@@ -126,9 +120,9 @@ async function deleteContact(id) {
 
     if (response.ok) {
         loadContacts();
+        showToast("Contato excluído com sucesso", "success");
     } else {
-        console.error("Erro ao excluir contato");
-        alert("Erro ao excluir contato.");
+        showToast("Erro ao excluir contato", "danger");
     }
 }
 
@@ -146,36 +140,25 @@ document.getElementById('editForm').addEventListener('submit', async function(ev
     event.preventDefault();
 
     const id = document.getElementById('editId').value;
-    const name = document.getElementById('editName').value.trim();
-    const number = document.getElementById('editNumber').value.trim();
-    const address = document.getElementById('editAddress').value.trim();
-    const email = document.getElementById('editEmail').value.trim();
+    const updatedContact = {
+        name: document.getElementById('editName').value,
+        number: document.getElementById('editNumber').value,
+        address: document.getElementById('editAddress').value,
+        email: document.getElementById('editEmail').value
+    };
 
-    if (!name || !number || !address || !email) {
-        alert("Por favor, preencha todos os campos para editar o contato.");
-        return;
-    }
+    let response = await fetch(`${SERVER_URL}/update-contact/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedContact)
+    });
 
-    const updatedContact = { name, number, address, email };
-
-    try {
-        let response = await fetch(`${SERVER_URL}/update-contact/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(updatedContact)
-        });
-
-        if (response.ok) {
-            loadContacts();
-            bootstrap.Modal.getInstance(document.getElementById('editContactModal')).hide();
-            alert("Contato atualizado com sucesso!");
-        } else {
-            let errorData = await response.json();
-            alert("Erro ao atualizar contato: " + (errorData.message || "Erro desconhecido."));
-        }
-    } catch (err) {
-        console.error("Erro ao atualizar contato:", err);
-        alert("Erro ao atualizar contato. Verifique sua conexão.");
+    if (response.ok) {
+        loadContacts();
+        bootstrap.Modal.getInstance(document.getElementById('editContactModal')).hide();
+        showToast("Contato atualizado com sucesso", "success");
+    } else {
+        showToast("Erro ao atualizar contato", "danger");
     }
 });
 
@@ -189,6 +172,7 @@ async function toggleFavorite(id, currentStatus) {
         loadContacts();
     } catch (err) {
         console.error("Erro ao atualizar favorito:", err);
+        showToast("Erro ao atualizar favorito", "danger");
     }
 }
 
@@ -204,4 +188,36 @@ function formatPhone(input) {
 
         e.target.value = formatted;
     });
+}
+
+// Função para mostrar alerta no canto inferior esquerdo
+function showToast(message, type = "info") {
+    const toastContainer = document.getElementById('toast-container') || createToastContainer();
+    const toast = document.createElement('div');
+    toast.className = `toast align-items-center text-bg-${type} border-0 show`;
+    toast.setAttribute('role', 'alert');
+    toast.style.marginBottom = '10px';
+    toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">${message}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    `;
+    toastContainer.appendChild(toast);
+
+    setTimeout(() => {
+        toast.remove();
+    }, 4000);
+}
+
+function createToastContainer() {
+    const container = document.createElement('div');
+    container.id = 'toast-container';
+    container.style.position = 'fixed';
+    container.style.bottom = '20px';
+    container.style.left = '20px';
+    container.style.zIndex = '9999';
+    container.style.maxWidth = '300px';
+    document.body.appendChild(container);
+    return container;
 }
