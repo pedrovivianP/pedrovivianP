@@ -83,25 +83,37 @@ function renderContacts() {
 document.getElementById('contactForm').addEventListener('submit', async function(event) {
     event.preventDefault();
 
-    let contact = {
-        name: document.getElementById('name').value,
-        number: document.getElementById('number').value,
-        address: document.getElementById('address').value,
-        email: document.getElementById('email').value
-    };
+    let name = document.getElementById('name').value.trim();
+    let number = document.getElementById('number').value.trim();
+    let address = document.getElementById('address').value.trim();
+    let email = document.getElementById('email').value.trim();
 
-    let response = await fetch(`${SERVER_URL}/add-contact`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(contact)
-    });
+    if (!name || !number || !address || !email) {
+        alert("Por favor, preencha todos os campos.");
+        return;
+    }
 
-    if (response.ok) {
-        loadContacts();
-        document.getElementById('contactForm').reset();
-        bootstrap.Modal.getInstance(document.getElementById('addContactModal')).hide();
-    } else {
-        console.error("Erro ao adicionar contato");
+    let contact = { name, number, address, email };
+
+    try {
+        let response = await fetch(`${SERVER_URL}/add-contact`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(contact)
+        });
+
+        if (response.ok) {
+            loadContacts();
+            document.getElementById('contactForm').reset();
+            bootstrap.Modal.getInstance(document.getElementById('addContactModal')).hide();
+            alert("Contato salvo com sucesso!");
+        } else {
+            let errorData = await response.json();
+            alert("Erro ao salvar contato: " + (errorData.message || "Erro desconhecido."));
+        }
+    } catch (err) {
+        console.error("Erro ao adicionar contato:", err);
+        alert("Erro ao salvar contato. Verifique sua conexão ou tente novamente mais tarde.");
     }
 });
 
@@ -116,6 +128,7 @@ async function deleteContact(id) {
         loadContacts();
     } else {
         console.error("Erro ao excluir contato");
+        alert("Erro ao excluir contato.");
     }
 }
 
@@ -133,25 +146,36 @@ document.getElementById('editForm').addEventListener('submit', async function(ev
     event.preventDefault();
 
     const id = document.getElementById('editId').value;
+    const name = document.getElementById('editName').value.trim();
+    const number = document.getElementById('editNumber').value.trim();
+    const address = document.getElementById('editAddress').value.trim();
+    const email = document.getElementById('editEmail').value.trim();
 
-    const updatedContact = {
-        name: document.getElementById('editName').value,
-        number: document.getElementById('editNumber').value,
-        address: document.getElementById('editAddress').value,
-        email: document.getElementById('editEmail').value
-    };
+    if (!name || !number || !address || !email) {
+        alert("Por favor, preencha todos os campos para editar o contato.");
+        return;
+    }
 
-    let response = await fetch(`${SERVER_URL}/update-contact/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedContact)
-    });
+    const updatedContact = { name, number, address, email };
 
-    if (response.ok) {
-        loadContacts();
-        bootstrap.Modal.getInstance(document.getElementById('editContactModal')).hide();
-    } else {
-        console.error("Erro ao atualizar contato");
+    try {
+        let response = await fetch(`${SERVER_URL}/update-contact/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedContact)
+        });
+
+        if (response.ok) {
+            loadContacts();
+            bootstrap.Modal.getInstance(document.getElementById('editContactModal')).hide();
+            alert("Contato atualizado com sucesso!");
+        } else {
+            let errorData = await response.json();
+            alert("Erro ao atualizar contato: " + (errorData.message || "Erro desconhecido."));
+        }
+    } catch (err) {
+        console.error("Erro ao atualizar contato:", err);
+        alert("Erro ao atualizar contato. Verifique sua conexão.");
     }
 });
 
