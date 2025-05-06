@@ -25,7 +25,6 @@ async function loadContacts() {
     try {
         let response = await fetch(`${SERVER_URL}/contacts`);
         let contacts = await response.json();
-
         originalContacts = contacts;
         renderContacts();
     } catch (error) {
@@ -101,7 +100,9 @@ document.getElementById('contactForm').addEventListener('submit', async function
     });
 
     if (response.ok) {
-        loadContacts();
+        const newContact = await response.json(); // contato com _id e dados do Mongo
+        originalContacts.push(newContact);        // adiciona na ordem de criação
+        renderContacts();
         document.getElementById('contactForm').reset();
         bootstrap.Modal.getInstance(document.getElementById('addContactModal')).hide();
         showToast("Contato salvo com sucesso!", "success");
@@ -119,7 +120,8 @@ async function deleteContact(id) {
     });
 
     if (response.ok) {
-        loadContacts();
+        originalContacts = originalContacts.filter(contact => contact._id !== id);
+        renderContacts();
         showToast("Contato excluído com sucesso", "success");
     } else {
         showToast("Erro ao excluir contato", "danger");
@@ -154,7 +156,12 @@ document.getElementById('editForm').addEventListener('submit', async function(ev
     });
 
     if (response.ok) {
-        loadContacts();
+        // Atualiza o contato na lista original
+        const index = originalContacts.findIndex(c => c._id === id);
+        if (index !== -1) {
+            originalContacts[index] = { ...originalContacts[index], ...updatedContact };
+        }
+        renderContacts();
         bootstrap.Modal.getInstance(document.getElementById('editContactModal')).hide();
         showToast("Contato atualizado com sucesso", "success");
     } else {
@@ -169,7 +176,11 @@ async function toggleFavorite(id, currentStatus) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ favorite: !currentStatus })
         });
-        loadContacts();
+
+        const contact = originalContacts.find(c => c._id === id);
+        if (contact) contact.favorite = !currentStatus;
+
+        renderContacts();
     } catch (err) {
         console.error("Erro ao atualizar favorito:", err);
         showToast("Erro ao atualizar favorito", "danger");
@@ -190,7 +201,6 @@ function formatPhone(input) {
     });
 }
 
-// Função para mostrar alerta no canto inferior esquerdo
 function showToast(message, type = "info") {
     const toastContainer = document.getElementById('toast-container') || createToastContainer();
     const toast = document.createElement('div');
