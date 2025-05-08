@@ -16,12 +16,25 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// Rota para adicionar contato (agora aceita se pelo menos um campo for preenchido)
 app.post('/add-contact', async (req, res) => {
+    const { name, number, address, email } = req.body;
+
+    if (
+        (!name || name.trim() === '') &&
+        (!number || number.trim() === '') &&
+        (!address || address.trim() === '') &&
+        (!email || email.trim() === '')
+    ) {
+        return res.status(400).json({ message: 'Preencha pelo menos um campo!' });
+    }
+
     try {
-        const contact = new Contact(req.body);
+        const contact = new Contact({ name, number, address, email });
         await contact.save();
-        res.json(contact);
+        res.status(201).json(contact);
     } catch (err) {
+        console.error("Erro ao salvar contato:", err);
         res.status(500).json({ error: 'Erro ao salvar contato' });
     }
 });
