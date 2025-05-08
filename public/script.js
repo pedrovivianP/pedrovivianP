@@ -87,7 +87,7 @@ document.getElementById('contactForm').addEventListener('submit', async function
     let email = document.getElementById('email').value.trim();
 
     if (!name || !number || !address || !email) {
-        showToast("Preencha todos os campos!", "warning");
+        showToast("Preencha todos os campos!", "danger");
         return;
     }
 
