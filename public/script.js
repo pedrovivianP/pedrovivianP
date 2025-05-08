@@ -165,6 +165,13 @@ document.getElementById('editForm').addEventListener('submit', async function(ev
         return;
     }
 
+    // Remove campos vazios
+    Object.keys(updatedContact).forEach(key => {
+        if (!updatedContact[key].trim()) {
+            delete updatedContact[key];
+        }
+    });
+    
     let response = await fetch(`${SERVER_URL}/update-contact/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
