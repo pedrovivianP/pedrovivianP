@@ -102,7 +102,10 @@ document.getElementById('contactForm').addEventListener('submit', async function
     if (response.ok) {
         const newContact = await response.json();
         originalContacts.push(newContact);
+    
+        // NÃO renderiza com ordenação se isSorted for false
         renderContacts();
+    
         document.getElementById('contactForm').reset();
         bootstrap.Modal.getInstance(document.getElementById('addContactModal')).hide();
         showToast("Contato salvo com sucesso!", "success");
