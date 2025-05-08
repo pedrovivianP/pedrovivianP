@@ -100,8 +100,8 @@ document.getElementById('contactForm').addEventListener('submit', async function
     });
 
     if (response.ok) {
-        const newContact = await response.json(); // contato com _id e dados do Mongo
-        originalContacts.push(newContact);        // adiciona na ordem de criação
+        const newContact = await response.json();
+        originalContacts.push(newContact);
         renderContacts();
         document.getElementById('contactForm').reset();
         bootstrap.Modal.getInstance(document.getElementById('addContactModal')).hide();
@@ -149,6 +149,11 @@ document.getElementById('editForm').addEventListener('submit', async function(ev
         email: document.getElementById('editEmail').value
     };
 
+    if (!updatedContact.name || !updatedContact.number || !updatedContact.address || !updatedContact.email) {
+        showToast("Preencha todos os campos para atualizar!", "warning");
+        return;
+    }
+
     let response = await fetch(`${SERVER_URL}/update-contact/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -156,7 +161,6 @@ document.getElementById('editForm').addEventListener('submit', async function(ev
     });
 
     if (response.ok) {
-        // Atualiza o contato na lista original
         const index = originalContacts.findIndex(c => c._id === id);
         if (index !== -1) {
             originalContacts[index] = { ...originalContacts[index], ...updatedContact };
@@ -225,7 +229,7 @@ function createToastContainer() {
     container.id = 'toast-container';
     container.style.position = 'fixed';
     container.style.bottom = '20px';
-    container.style.left = '20px';
+    container.style.right = '20px';  // POSICIONA NO CANTO INFERIOR DIREITO
     container.style.zIndex = '9999';
     container.style.maxWidth = '300px';
     document.body.appendChild(container);
