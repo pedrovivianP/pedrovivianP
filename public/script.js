@@ -1,7 +1,7 @@
 //O SITE ESTÁ RODANDO NA HOST ONRENDER COM O BANCO DE DADOS MONGODB:   https://listadecontatos.onrender.com/
 //O SITE ESTÁ RODANDO NA HOST ONRENDER COM O BANCO DE DADOS MONGODB:   https://listadecontatos.onrender.com/
 //O SITE ESTÁ RODANDO NA HOST ONRENDER COM O BANCO DE DADOS MONGODB:   https://listadecontatos.onrender.com/
-const SERVER_URL = "https://listadecontatos.onrender.com";
+const SERVER_URL = "https://listadecontatoss.onrender.com";
 let isSorted = false;
 let originalContacts = [];
 
@@ -171,7 +171,7 @@ document.getElementById('editForm').addEventListener('submit', async function(ev
             delete updatedContact[key];
         }
     });
-    
+
     let response = await fetch(`${SERVER_URL}/update-contact/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
