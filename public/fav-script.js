@@ -88,8 +88,16 @@ document.getElementById('editForm').addEventListener('submit', async function (e
         email: document.getElementById('editEmail').value.trim()
     };
 
-    if (!updatedContact.name || !updatedContact.number || !updatedContact.address || !updatedContact.email) {
-        showToast("Preencha todos os campos para atualizar!", "danger");
+    const campos = [
+        updatedContact.name,
+        updatedContact.number,
+        updatedContact.address,
+        updatedContact.email
+    ];
+    const algumPreenchido = campos.some(campo => campo.trim() !== "");
+    
+    if (!algumPreenchido) {
+        showToast("Preencha pelo menos um campo para atualizar!", "danger");
         return;
     }
 

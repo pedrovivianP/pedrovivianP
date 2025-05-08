@@ -86,8 +86,8 @@ document.getElementById('contactForm').addEventListener('submit', async function
     let address = document.getElementById('address').value.trim();
     let email = document.getElementById('email').value.trim();
 
-    if (!name || !number || !address || !email) {
-        showToast("Preencha todos os campos!", "danger");
+    if (!name && !number && !address && !email) {
+        showToast("Preencha pelo menos um campo!", "danger");
         return;
     }
 
@@ -152,8 +152,16 @@ document.getElementById('editForm').addEventListener('submit', async function(ev
         email: document.getElementById('editEmail').value
     };
 
-    if (!updatedContact.name || !updatedContact.number || !updatedContact.address || !updatedContact.email) {
-        showToast("Preencha todos os campos para atualizar!", "danger");
+    const campos = [
+        updatedContact.name,
+        updatedContact.number,
+        updatedContact.address,
+        updatedContact.email
+    ];
+    const algumPreenchido = campos.some(campo => campo.trim() !== "");
+    
+    if (!algumPreenchido) {
+        showToast("Preencha pelo menos um campo para atualizar!", "danger");
         return;
     }
 
