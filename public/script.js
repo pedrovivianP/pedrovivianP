@@ -153,7 +153,7 @@ document.getElementById('editForm').addEventListener('submit', async function(ev
     };
 
     if (!updatedContact.name || !updatedContact.number || !updatedContact.address || !updatedContact.email) {
-        showToast("Preencha todos os campos para atualizar!", "warning");
+        showToast("Preencha todos os campos para atualizar!", "danger");
         return;
     }
 
