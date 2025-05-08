@@ -16,6 +16,8 @@ document.addEventListener("DOMContentLoaded", () => {
             sortBtn.textContent = isSorted ? "↻ Ordem Original" : "Ordenar A-Z";
         });
     }
+
+    formatPhone(document.getElementById('editNumber'));
 });
 
 async function loadFavorites() {
@@ -80,11 +82,16 @@ document.getElementById('editForm').addEventListener('submit', async function (e
     const id = document.getElementById('editId').value;
 
     const updatedContact = {
-        name: document.getElementById('editName').value,
-        number: document.getElementById('editNumber').value,
-        address: document.getElementById('editAddress').value,
-        email: document.getElementById('editEmail').value
+        name: document.getElementById('editName').value.trim(),
+        number: document.getElementById('editNumber').value.trim(),
+        address: document.getElementById('editAddress').value.trim(),
+        email: document.getElementById('editEmail').value.trim()
     };
+
+    if (!updatedContact.name || !updatedContact.number || !updatedContact.address || !updatedContact.email) {
+        showToast("Preencha todos os campos para atualizar!", "danger");
+        return;
+    }
 
     try {
         const response = await fetch(`${SERVER_URL}/update-contact/${id}`, {
@@ -144,7 +151,20 @@ async function toggleFavorite(id) {
     }
 }
 
-// Toast visual no canto inferior esquerdo
+function formatPhone(input) {
+    input.addEventListener('input', function (e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 11) value = value.slice(0, 11);
+
+        let formatted = '';
+        if (value.length > 0) formatted += '(' + value.substring(0, 2);
+        if (value.length >= 3) formatted += ') ' + value.substring(2, 7);
+        if (value.length >= 8) formatted += '-' + value.substring(7, 11);
+
+        e.target.value = formatted;
+    });
+}
+
 function showToast(message, type = "info") {
     const toastContainer = document.getElementById('toast-container') || createToastContainer();
     const toast = document.createElement('div');
@@ -169,7 +189,7 @@ function createToastContainer() {
     container.id = 'toast-container';
     container.style.position = 'fixed';
     container.style.bottom = '20px';
-    container.style.left = '20px';
+    container.style.right = '20px';  // Mantido igual ao script.js
     container.style.zIndex = '9999';
     container.style.maxWidth = '300px';
     document.body.appendChild(container);
